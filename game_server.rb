@@ -1,5 +1,6 @@
 require 'sinatra'
 require './resources/user_resource'
+require './dmconfig'
 #require 'resources/game_handler.rb'
 
 class GameServer < Sinatra::Base

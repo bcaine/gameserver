@@ -2,8 +2,6 @@ require 'data_mapper'
 require 'json'
 require './models/user'
 
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/game_server.db")
-
 class Token
 	include DataMapper::Resource
 	property :id, Serial
@@ -22,5 +20,3 @@ class Token
 	end
 
 end
-
-DataMapper.finalize.auto_upgrade!

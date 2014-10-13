@@ -2,7 +2,7 @@ require 'data_mapper'
 require 'json'
 require './models/token'
 
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/game_server.db")
+# DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/game_server.db")
 
 class User
 	include DataMapper::Resource
@@ -19,4 +19,4 @@ class User
 	end
 end
 
-DataMapper.finalize.auto_upgrade!
+# DataMapper.finalize.auto_upgrade!
