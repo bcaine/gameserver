@@ -18,8 +18,8 @@ class GuessNumber
 		guess = json_data["guess"].to_i
 
 		if self.tries >= self.chances
-			won = false
-			done = true
+			self.won = false
+			self.done = true
 			return generate_response "Out of tries!"
 		end
 

@@ -52,9 +52,12 @@ class GameResource < Sinatra::Base
 
 		user = User.get params[:user_id]
 
-		return 400.to_json unless game_types.include? params[:game_types]
+		return 400.to_json unless game_types.include? params[:game_type]
 
 		game = get_game(camelize(params[:game_type])).new
+
+		# If we don't have a user or a game object, return a 404
+		return 404.to_json if user.nil? || game.nil?
 
 		if game.save && user.save
 			# We don't care if there was a previous token, we are overwriting it
