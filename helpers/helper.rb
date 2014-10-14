@@ -1,3 +1,4 @@
+# This is a helper file that includes ancillary functions.
 
 # Load all the game types from the game directory.
 def get_games
@@ -15,6 +16,7 @@ def camelize(string)
     string.replace(string.split("_").each {|s| s.capitalize! }.join(""))
 end
 
+# Get the game object corresponding to a string
 def get_game(game_name)
 	game_name = game_name.to_s
 	Object.const_get(game_name)
