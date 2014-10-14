@@ -1,11 +1,11 @@
 require 'sinatra'
 require './resources/user_resource'
+require './resources/game_resource'
 require './dmconfig'
-#require 'resources/game_handler.rb'
 
 class GameServer < Sinatra::Base
 	use UserResource
-	# use GameHandler
+	use GameResource
 
 	get '/' do
 		# TODO: We want to use this as a directory to guide them through the API

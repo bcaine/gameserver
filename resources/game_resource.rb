@@ -1,0 +1,79 @@
+require 'sinatra'
+require './models/user'
+require './models/game'
+require './helpers/helper'
+require 'pry'
+
+# Require every game in our games directory.
+Dir["./games/*.rb"].each {|file| require file }
+
+class GameResource < Sinatra::Base
+	# Time until token expiration. Move this to a configuration. 3600 seconds * 1 hour
+	token_expiration = 3600 * 1
+
+	# Get a list of games
+	game_types = get_games
+
+	# curl localhost:4567/games/
+	get '/games/' do
+		game_types.to_json
+	end
+
+	# curl -X PUT -H "Content-Type: application/json" -d '{"guess": "5"}' localhost:4567/games/1/
+	put '/games/:token/' do
+		# Get the JSON we passed on the request
+		request_json = JSON.parse(request.body.read)
+
+		if request_json.empty?
+			return "Please provide a json blob with your turn".to_json
+		end
+
+		token = Token.get params[:token]
+
+		if token
+			binding.pry
+			unless token.is_expired?
+				game = get_game(token.game_type).get token.game_id
+				response = game.play(request_json)
+				game.save
+			else
+				response = "Your token has expired!"
+			end
+		else
+			return 404.to_json
+		end
+
+		response.to_json
+	end
+
+	# curl -X POST -d '' localhost:4567/games/guess_number/user/1/
+	post '/games/:game_type/user/:user_id/' do
+
+		user = User.get params[:user_id]
+		if !game_types.include? params[:game_type]
+			return 400
+		end
+
+		game = get_game(camelize(params[:game_type])).new
+
+		# Increase the number of games the user has played.
+		user.total += 1
+
+		if game.save && user.save
+			# We don't care if there was a previous token, we are overwriting it
+			token = Token.new
+			token.user_id = user.id
+			token.game_id = game.id
+			token.game_type = game.type
+			token.expires_at = Time.now + token_expiration
+		else
+			return 500.to_json
+		end
+
+		if token.save
+			{ :game_token => token.id }.to_json
+		else
+			500.to_json
+		end
+	end
+end
