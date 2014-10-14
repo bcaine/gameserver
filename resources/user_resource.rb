@@ -6,11 +6,7 @@ class UserResource < Sinatra::Base
 	# curl localhost:4567/users/
 	get '/users/' do
 		users = User.all :order => :id.asc
-		user_array = []
-		users.each do |user|
-			user_array << user.to_json
-		end
-		user_array.to_json
+		users.collect{ |user| user.to_json }.to_json
 	end
 
 	# curl localhost:4567/users/1
