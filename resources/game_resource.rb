@@ -7,7 +7,8 @@ require './helpers/helper'
 Dir["./games/*.rb"].each {|file| require file }
 
 class GameResource < Sinatra::Base
-	# Time until token expiration. Move this to a configuration. 3600 seconds * 1 hour
+	# Time until token expiration. This should probably be configurable in the future. 
+	# 3600 seconds * 1 hour = 1 hour.
 	token_expiration = 3600 * 1
 
 	# Get a list of games
@@ -20,12 +21,10 @@ class GameResource < Sinatra::Base
 
 	# curl -X PUT -H "Content-Type: application/json" -d '{"guess": "5"}' localhost:4567/games/1/
 	put '/games/:token/' do
-		# Get the JSON we passed on the request
+		# Get the JSON that is passed in on the request
 		request_json = JSON.parse(request.body.read)
 
-		if request_json.empty?
-			return "Please provide a json blob with your turn".to_json
-		end
+		return "Please provide a json blob with your turn".to_json if request_json.empty?
 
 		token = Token.get params[:token]
 
@@ -37,9 +36,7 @@ class GameResource < Sinatra::Base
 				response = game.play(request_json)
 
 				# If our update fails (tries to save and can't), return a server error (500)
-				unless update_user_record(user, response)
-					return 500.to_json
-				end
+				return 500.to_json unless update_user_record(user, response)
 
 				game.save
 			else
@@ -56,9 +53,8 @@ class GameResource < Sinatra::Base
 	post '/games/:game_type/user/:user_id/' do
 
 		user = User.get params[:user_id]
-		if !game_types.include? params[:game_type]
-			return 400
-		end
+
+		return 400.to_json unless game_types.include? params[:game_types]
 
 		game = get_game(camelize(params[:game_type])).new
 

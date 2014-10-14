@@ -10,21 +10,17 @@ class GuessNumber
 	# Take a turn at the game
 	def play(json_data)
 		# If they already won, return
-		if self.done
-			return { :won => self.won, :response => "You already won!", :tries => self.tries, :chances => self.chances }
-		end
+		return generate_response "You already won!" if self.done
 
-		if json_data["guess"].nil?
-			# We have mercy and don't count this as an attempt (try).
-			return { :response => "Provide a guess like: '{\"guess\": \"5\"}'", :tries => self.tries, :chances => self.chances }
-		end
+		# If they don't provide a guess we let them know, have mercy, and don't count this as an attempt (try).
+		return generate_response "Provide a guess like: '{\"guess\": \"5\"}'" if json_data["guess"].nil?
 
 		guess = json_data["guess"].to_i
 
 		if self.tries >= self.chances
 			won = false
 			done = true
-			return { :won => self.won, :response => "Out of tries!", :tries => self.tries, :chances => self.chances }
+			return generate_response "Out of tries!"
 		end
 
 		# Increment our try count
@@ -33,11 +29,21 @@ class GuessNumber
 		if self.number == guess
 			self.won = true
 			self.done = true
-			{ :won => self.won, :done => self.done, :response => "Congrats, You won!", :tries => self.tries, :chances => self.chances }
+			generate_response "Congrats, You won!"
 		elsif self.number > guess
-			{ :response => "Guess a higher number.", :tries => self.tries, :chances => self.chances }
+			generate_response "Guess a higher number."
 		else
-			{ :response => "Guess a lower number.", :tries => self.tries, :chances => self.chances }
+			generate_response "Guess a lower number."
 		end
+	end
+
+	def generate_response(response)
+		{
+			:response => response,
+			:tries => self.tries,
+			:chances => self.chances,
+			:won => self.won,
+			:done => self.done
+		}
 	end
 end
