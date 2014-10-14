@@ -13,8 +13,4 @@ class User
 	def to_json
 		{ :id => id, :wins => wins, :losses => losses, :total => total, :created_at => created_at }.to_json
 	end
-
-	def playing_game
-		total += 1
-	end
 end
