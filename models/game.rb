@@ -16,8 +16,8 @@ module Game
 				{ :id => id, :gametype => type, :state => state, :created_at => created_at }.to_json
 			end
 
-			def turn(json)
-				"Not implemented".to_json
+			def play(json_data)
+				"Playing has not been implemented for this game!"
 			end
 		end
 	end
