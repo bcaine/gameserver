@@ -32,13 +32,11 @@ class GameResource < Sinatra::Base
 			unless token.is_expired?
 				game = get_game(token.game_type).get token.game_id
 				user = User.get token.user_id
-
 				response = game.play(request_json)
 
-				# If our update fails (tries to save and can't), return a server error (500)
+				# If either update fails (tries to save and can't), return a server error (500)
 				return 500.to_json unless update_user_record(user, response)
-
-				game.save
+				return 500.to_json unless game.save
 			else
 				response = "Your token has expired!"
 			end
