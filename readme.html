@@ -1,0 +1,322 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>Vessel Programming Challenge: Game Server</title>
+
+</head>
+<body>
+<h1>Vessel Programming Challenge: Game Server</h1>
+
+<p>By: Ben Caine</p>
+
+<p>This is a generic game server used to host arbitrary turn based text games. Games are played through a RESTful interface, with responses and requests sending JSON.</p>
+
+<h2>Overview</h2>
+
+<p>This game server uses the following technology:</p>
+
+<ul>
+<li>Ruby 2.0.0</li>
+<li>Sinatra 1.4.5</li>
+<li>DataMapper 1.2.0</li>
+<li>SQLite 3.7.13</li>
+<li>json (gem) 1.8.1</li>
+</ul>
+
+
+<h2>Installation</h2>
+
+<p>Ensure you have Ruby 2.0 installed and bundler.</p>
+
+<p>If you don't have bundler, run <code>gem install bundler</code></p>
+
+<p>Then you can run <code>bundle install</code> which should install all dependencies.</p>
+
+<h2>File Structure</h2>
+
+<ul>
+<li>Gemfile - Used by bundle to install gems</li>
+<li>dmconfig.rb - Used by DataMapper to set up the SQLite database</li>
+<li>game_server.rb - Main file of our service</li>
+<li>game_server.db - SQLite database file (may not exist yet)</li>
+<li>games/ - Directory of all of our games.</li>
+<li>helpers/ - Directory of our helper files</li>
+<li>models/ - Our permanent classes</li>
+<li>resources/ - Our RESTful interface</li>
+</ul>
+
+
+<h2>Running the service</h2>
+
+<p>To run the service, simply type
+<code>ruby game_server.rb</code></p>
+
+<p>This should launch a local server you can access at "localhost:4567"</p>
+
+<p>Check that it works by doing
+<code>curl localhost:4567/</code> and ensuring it returns "Welcome to Ben's Game Server!"</p>
+
+<h2>API / Interface</h2>
+
+<h4>Users</h4>
+
+<ul>
+<li>GET /users/   returns a list of users (in JSON form)</li>
+<li>GET /users/:id/ returns a JSON representation of the user (including wins/losses)</li>
+<li>POST /users/ creates a new User and returns the id of that user.</li>
+</ul>
+
+
+<h4>Games</h4>
+
+<ul>
+<li>GET /games/ returns a list of game types</li>
+<li>PUT /games/:token/ takes JSON, plays the game, returns the current state</li>
+<li>POST /games/:game_type/user/:user_id/ Starts a game of :game_type for user :user_id. Returns token ID to use in /games/:token/</li>
+</ul>
+
+
+<h2>Adding Games</h2>
+
+<p>Adding games is very straight forward. You simply need to create a new file (and class) in the games/ directory that includes "Game", with a property :id, and function play(json) which accepts JSON and returns a response hash.</p>
+
+<pre><code>require './models/game'
+class YourGame
+    include Game
+    property :id, Serial
+    property :game_field, Integer, :default =&gt; 0
+    # More properties here if needed
+
+    def play(json_data)
+        # Code here that implements a turn in the game
+        response
+    end
+end
+</code></pre>
+
+<p><strong>Note: The response must have a :done => true, and a :won => true (or false) when the game is finished (see below)</strong></p>
+
+<pre><code>{
+    "won":true,
+    "done":true,
+    "response":"Some Message",
+    "some_data": 0 
+}
+</code></pre>
+
+<p>Then you need to restart the server. On server start, a table will be automatically generated in SQLite and the game will be playable through the game interface.</p>
+
+<h2>Playing (Testing)</h2>
+
+<p>I provided a simple "game" called <code>guess_number</code> that you can use for testing the API's.</p>
+
+<p>To start, we want to first create a user.</p>
+
+<pre><code>curl -X POST -d '' localhost:4567/users/
+
+{"user_id":2}
+</code></pre>
+
+<p>We then can test that we can list every user.</p>
+
+<pre><code>curl localhost:4567/users/
+
+["{\"id\":1,\"wins\":0,\"losses\":0,\"total\":0,\"created_at\":\"2014-10-13T20:26:48-04:00\"}"]
+</code></pre>
+
+<p>We can also test that the /users/:id/ endpoint works.</p>
+
+<pre><code>curl localhost:4567/users/1/
+
+{"id":1,"wins":0,"losses":0,"total":0,"created_at":"2014-10-13T20:26:48-04:00"}
+</code></pre>
+
+<p>Next, we want to check our game endpoints.</p>
+
+<pre><code>curl localhost:4567/games/
+
+["guess_number","mock"]
+</code></pre>
+
+<p>We then want to start a game, which we do with a request to /games/:game_type/user/:user_id/ which returns a token number we will use next.</p>
+
+<pre><code>curl -X POST -d '' localhost:4567/games/guess_number/user/1/
+
+{"game_token":1}
+</code></pre>
+
+<p>We can then use that game token number to play the game through the PUT /games/:token/ endpoint.</p>
+
+<pre><code>curl -X PUT -H "Content-Type: application/json" -d '{"guess": "5"}' localhost:4567/games/1/
+
+{"won":true,"done":true,"response":"Congrats, You won!","tries":1,"chances":10}
+</code></pre>
+
+<p>That's it for the API, but you can do some sanity checks.</p>
+
+<p>Check that the users score is updated.</p>
+
+<pre><code>curl localhost:4567/users/
+
+["{\"id\":1,\"wins\":1,\"losses\":0,\"total\":1,\"created_at\":\"2014-10-13T22:52:53-04:00\"}"]
+</code></pre>
+
+<p>Or if you prefer</p>
+
+<pre><code>curl localhost:4567/users/1/
+
+{"id":1,"wins":1,"losses":0,"total":1,"created_at":"2014-10-13T22:52:53-04:00"}
+</code></pre>
+</body>
+</html>

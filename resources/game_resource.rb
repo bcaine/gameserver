@@ -2,7 +2,6 @@ require 'sinatra'
 require './models/user'
 require './models/game'
 require './helpers/helper'
-require 'pry'
 
 # Require every game in our games directory.
 Dir["./games/*.rb"].each {|file| require file }
@@ -31,10 +30,17 @@ class GameResource < Sinatra::Base
 		token = Token.get params[:token]
 
 		if token
-			binding.pry
 			unless token.is_expired?
 				game = get_game(token.game_type).get token.game_id
+				user = User.get token.user_id
+
 				response = game.play(request_json)
+
+				# If our update fails (tries to save and can't), return a server error (500)
+				unless update_user_record(user, response)
+					return 500.to_json
+				end
+
 				game.save
 			else
 				response = "Your token has expired!"
@@ -55,9 +61,6 @@ class GameResource < Sinatra::Base
 		end
 
 		game = get_game(camelize(params[:game_type])).new
-
-		# Increase the number of games the user has played.
-		user.total += 1
 
 		if game.save && user.save
 			# We don't care if there was a previous token, we are overwriting it

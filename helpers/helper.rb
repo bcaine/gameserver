@@ -19,3 +19,19 @@ def get_game(game_name)
 	game_name = game_name.to_s
 	Object.const_get(game_name)
 end
+
+# Update user's win/loss record.
+def update_user_record(user, response)
+	if response[:done]
+		if response[:won]
+			user.wins += 1
+		else
+			user.losses += 1
+		end
+		user.total += 1
+		user.save
+	else
+		true
+	end
+end
+

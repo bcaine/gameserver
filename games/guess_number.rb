@@ -1,5 +1,4 @@
 require './models/game'
-require 'pry'
 
 class GuessNumber
 	include Game
@@ -11,8 +10,13 @@ class GuessNumber
 	# Take a turn at the game
 	def play(json_data)
 		# If they already won, return
-		if self.won
+		if self.done
 			return { :won => self.won, :response => "You already won!", :tries => self.tries, :chances => self.chances }
+		end
+
+		if json_data["guess"].nil?
+			# We have mercy and don't count this as an attempt (try).
+			return { :response => "Provide a guess like: '{\"guess\": \"5\"}'", :tries => self.tries, :chances => self.chances }
 		end
 
 		guess = json_data["guess"].to_i
@@ -20,6 +24,7 @@ class GuessNumber
 
 		if self.tries >= self.chances
 			won = false
+			done = true
 			response = { :won => self.won, :response => "Out of tries!", :tries => self.tries, :chances => self.chances }
 		end
 
@@ -27,8 +32,9 @@ class GuessNumber
 		self.tries += 1
 
 		if self.number == guess
-			won = true
-			response = { :won => self.won, :response => "Congrats, You won!", :tries => self.tries, :chances => self.chances }
+			self.won = true
+			self.done = true
+			response = { :won => self.won, :done => self.done, :response => "Congrats, You won!", :tries => self.tries, :chances => self.chances }
 		elsif self.number > guess
 			response = { :response => "Guess a higher number.", :tries => self.tries, :chances => self.chances }
 		else
@@ -37,9 +43,4 @@ class GuessNumber
 
 		response
 	end
-
-	def help
-		"Provide a guess as a json blob. { \"guess\": \"5\" }".turn_json
-	end
-
 end
