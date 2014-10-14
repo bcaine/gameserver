@@ -12,20 +12,12 @@ class UserResource < Sinatra::Base
 	# curl localhost:4567/users/1
 	get '/users/:id/' do
 		user = User.get params[:id]
-		if user
-			user.to_json
-		else
-			404.to_json
-		end
+		user.nil? ? 404.to_json : user.to_json
 	end
 
 	# curl -X POST -d '' localhost:4567/users/
 	post '/users/' do
 		user = User.new
-		if user.save!
-			{ :user_id => user.id }.to_json
-		else
-			500.to_json
-		end
+		user.save! ? { :user_id => user.id }.to_json : 500.to_json
 	end
 end
