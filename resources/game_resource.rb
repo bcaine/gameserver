@@ -1,7 +1,7 @@
 require 'sinatra'
 require './models/user'
 require './models/game'
-require './helpers/helper'
+require './helpers/game_helper'
 
 # Require every game in our games directory.
 Dir["./games/*.rb"].each {|file| require file }
