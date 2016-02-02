@@ -1,4 +1,4 @@
-# Vessel Programming Challenge: Game Server #
+# Programming Challenge: Game Server
 
 By: Ben Caine
 
