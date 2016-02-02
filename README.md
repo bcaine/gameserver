@@ -2,7 +2,7 @@
 
 By: Ben Caine
 
-This is a generic game server used to host arbitrary turn based text games. Games are played through a RESTful interface, with responses and requests sending JSON.
+This is a generic game server used to host arbitrary turn based text games. Games are played through a RESTful interface, with responses and requests sending JSON. Games can be easily added to the server by adding a ruby file to the games/ directory with a play(json) function.
 
 ## Overview ##
 This game server uses the following technology:
