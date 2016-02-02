@@ -7,13 +7,12 @@ require './dmconfig'
 # The majority of the resources are in UserResource and GameResource
 
 class GameServer < Sinatra::Base
-	use UserResource
-	use GameResource
+    use UserResource
+    use GameResource
 
-	get '/' do
-		# TODO: We want to use this as a directory to guide them through the API
-		"Welcome to Ben's Game Server!\n"
-	end
+    get '/' do
+        "Welcome to Ben's Game Server!\n"
+    end
 end
 
 GameServer.run!

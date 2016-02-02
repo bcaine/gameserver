@@ -13,7 +13,11 @@ module Game
 			property :type, base::Discriminator
 
 			def to_json
-				{ :id => id, :gametype => type, :state => state, :created_at => created_at }.to_json
+			    { :id => id,
+                  :gametype => type,
+                  :state => state,
+                  :created_at => created_at
+                }.to_json
 			end
 
 			def play(json_data)

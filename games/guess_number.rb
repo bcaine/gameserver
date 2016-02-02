@@ -1,7 +1,7 @@
 require './models/game'
 
 class GuessNumber
-	include Game
+    include Game
 	property :id, Serial
 	property :chances, Integer, :default => 10
 	property :tries, Integer, :default => 0
@@ -12,8 +12,11 @@ class GuessNumber
 		# If they already won, return
 		return generate_response "You already won!" if self.done
 
-		# If they don't provide a guess we let them know, have mercy, and don't count this as an attempt (try).
-		return generate_response "Provide a guess like: '{\"guess\": \"5\"}'" if json_data["guess"].nil?
+		# If they don't provide a guess we let them know,
+        # have mercy, and don't count this as an attempt (try).
+        if json_data["guess"].nil?
+		    return generate_response "Provide a guess like: '{\"guess\": \"5\"}'"
+        end
 
 		guess = json_data["guess"].to_i
 

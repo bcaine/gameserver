@@ -11,6 +11,11 @@ class User
 	property :created_at, DateTime, :default => Time.now
 
 	def to_json
-		{ :id => id, :wins => wins, :losses => losses, :total => total, :created_at => created_at }.to_json
+	    { :id => id,
+          :wins => wins,
+          :losses => losses,
+          :total => total,
+          :created_at => created_at
+        }.to_json
 	end
 end
